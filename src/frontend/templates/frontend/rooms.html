@@ -1,0 +1,185 @@
+{% extends 'frontend/base.html' %}
+
+{% block title %}Rooms - Hotel Booking System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1><i class="bi bi-door-closed"></i> Room Management</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                <i class="bi bi-plus-circle"></i> Add New Room
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="roomsTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Room No</th>
+                            <th>Floor</th>
+                            <th>Capacity</th>
+                            <th>Price</th>
+                            <th>Details</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roomsTableBody">
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Room Modal -->
+<div class="modal fade" id="addRoomModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Room</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addRoomForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="roomNo" class="form-label">Room Number</label>
+                        <input type="text" class="form-control" id="roomNo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="floorNo" class="form-label">Floor Number</label>
+                        <input type="number" class="form-control" id="floorNo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="capacity" class="form-label">Capacity</label>
+                        <input type="number" class="form-control" id="capacity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" step="0.01" class="form-control" id="price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="details" class="form-label">Details</label>
+                        <textarea class="form-control" id="details" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Room</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+const token = localStorage.getItem('token');
+
+// Load rooms
+async function loadRooms() {
+    try {
+        const response = await fetch('/api/room/', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            const tbody = document.getElementById('roomsTableBody');
+            tbody.innerHTML = '';
+            
+            if (data.results && data.results.length > 0) {
+                data.results.forEach(room => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${room.room_no}</td>
+                            <td>${room.floor_no}</td>
+                            <td>${room.capacity}</td>
+                            <td>$${room.price}</td>
+                            <td>${room.details || '-'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="editRoom(${room.id})">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteRoom(${room.id})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No rooms found</td></tr>';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading rooms:', error);
+    }
+}
+
+// Add room
+document.getElementById('addRoomForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const roomData = {
+        room_no: document.getElementById('roomNo').value,
+        floor_no: parseInt(document.getElementById('floorNo').value),
+        capacity: parseInt(document.getElementById('capacity').value),
+        price: parseFloat(document.getElementById('price').value),
+        details: document.getElementById('details').value
+    };
+    
+    try {
+        const response = await fetch('/api/room/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Token ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(roomData)
+        });
+        
+        if (response.ok) {
+            alert('Room added successfully!');
+            document.getElementById('addRoomForm').reset();
+            bootstrap.Modal.getInstance(document.getElementById('addRoomModal')).hide();
+            loadRooms();
+        } else {
+            alert('Failed to add room');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error adding room');
+    }
+});
+
+function deleteRoom(id) {
+    if (confirm('Are you sure you want to delete this room?')) {
+        fetch(`/api/room/${id}/`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Token ${token}` }
+        }).then(response => {
+            if (response.ok) {
+                alert('Room deleted successfully!');
+                loadRooms();
+            }
+        });
+    }
+}
+
+function editRoom(id) {
+    alert('Edit functionality coming soon!');
+}
+
+// Load rooms on page load
+document.addEventListener('DOMContentLoaded', loadRooms);
+</script>
+{% endblock %}
+

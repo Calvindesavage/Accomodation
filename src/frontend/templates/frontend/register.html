@@ -1,0 +1,118 @@
+{% extends 'frontend/base.html' %}
+
+{% block title %}Register - Hotel Booking System{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="card-title text-center mb-4">
+                        <i class="bi bi-person-plus"></i> Register
+                    </h2>
+
+                    <form id="registerForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="first_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="last_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="password2" name="password2" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-person-plus"></i> Register
+                        </button>
+                    </form>
+
+                    <hr class="my-4">
+                    <p class="text-center">
+                        Already have an account? 
+                        <a href="{% url 'frontend:login' %}">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const password2 = document.getElementById('password2').value;
+
+    if (password !== password2) {
+        alert('Passwords do not match');
+        return;
+    }
+
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters long');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/account/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                first_name: firstName,
+                last_name: lastName,
+                password: password,
+                password2: password2
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
+            alert('Registration successful! Welcome ' + data.first_name + '!');
+            window.location.href = '{% url "frontend:dashboard" %}';
+        } else {
+            // Display specific error messages
+            let errorMsg = 'Registration failed:\n';
+            if (data.email) {
+                errorMsg += '- ' + data.email.join(', ') + '\n';
+            }
+            if (data.password) {
+                errorMsg += '- ' + data.password.join(', ') + '\n';
+            }
+            if (data.message) {
+                errorMsg += '- ' + data.message + '\n';
+            }
+            if (data.non_field_errors) {
+                errorMsg += '- ' + data.non_field_errors.join(', ') + '\n';
+            }
+            alert(errorMsg || 'Registration failed. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Registration failed. Please check your connection and try again.');
+    }
+});
+</script>
+{% endblock %}
+

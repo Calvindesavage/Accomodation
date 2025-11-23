@@ -1,0 +1,201 @@
+{% extends 'frontend/base.html' %}
+
+{% block title %}Dashboard - Hotel Booking System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="mb-4">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </h1>
+            <div class="alert alert-info">
+                <h4 class="alert-heading">
+                    <i class="bi bi-person-circle"></i> Welcome, <span id="userName">User</span>!
+                </h4>
+                <p class="mb-0">Email: <span id="userEmail">-</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Total Rooms</h6>
+                            <h2 id="totalRooms" class="mb-0">-</h2>
+                        </div>
+                        <i class="bi bi-door-closed display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Total Customers</h6>
+                            <h2 id="totalCustomers" class="mb-0">-</h2>
+                        </div>
+                        <i class="bi bi-people display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Active Bookings</h6>
+                            <h2 id="activeBookings" class="mb-0">-</h2>
+                        </div>
+                        <i class="bi bi-calendar-check display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card bg-warning text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Total Payments</h6>
+                            <h2 id="totalPayments" class="mb-0">$-</h2>
+                        </div>
+                        <i class="bi bi-credit-card display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{% url 'frontend:rooms' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-door-closed"></i> Manage Rooms
+                        </a>
+                        <a href="{% url 'frontend:customers' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-people"></i> Manage Customers
+                        </a>
+                        <a href="{% url 'frontend:bookings' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-calendar-check"></i> Manage Bookings
+                        </a>
+                        <a href="{% url 'frontend:payments' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-credit-card"></i> Manage Payments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">User Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> <span id="userFullName">-</span></p>
+                    <p><strong>Email:</strong> <span id="userEmailInfo">-</span></p>
+                    <p><strong>Account Status:</strong> <span class="badge bg-success">Active</span></p>
+                    <p class="text-muted mb-0">Hotel Booking System v1.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Check if user is logged in
+const token = localStorage.getItem('token');
+if (!token) {
+    window.location.href = '{% url "frontend:login" %}';
+}
+
+// Load user information
+async function loadUserInfo() {
+    try {
+        const response = await fetch('/api/account/me', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+
+        if (response.ok) {
+            const user = await response.json();
+            document.getElementById('userName').textContent = `${user.first_name} ${user.last_name}`;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userFullName').textContent = `${user.first_name} ${user.last_name}`;
+            document.getElementById('userEmailInfo').textContent = user.email;
+        } else {
+            // Token is invalid, redirect to login
+            localStorage.removeItem('token');
+            window.location.href = '{% url "frontend:login" %}';
+        }
+    } catch (error) {
+        console.error('Error loading user info:', error);
+    }
+}
+
+// Load dashboard statistics
+async function loadDashboardStats() {
+    try {
+        // Load rooms count
+        const roomsRes = await fetch('/api/room/', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+        if (roomsRes.ok) {
+            const roomsData = await roomsRes.json();
+            document.getElementById('totalRooms').textContent = roomsData.results ? roomsData.results.length : 0;
+        }
+
+        // Load customers count
+        const customersRes = await fetch('/api/customer/', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+        if (customersRes.ok) {
+            const customersData = await customersRes.json();
+            document.getElementById('totalCustomers').textContent = customersData.results ? customersData.results.length : 0;
+        }
+
+        // Load bookings count
+        const bookingsRes = await fetch('/api/booking/', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+        if (bookingsRes.ok) {
+            const bookingsData = await bookingsRes.json();
+            document.getElementById('activeBookings').textContent = bookingsData.results ? bookingsData.results.length : 0;
+        }
+
+        // Load payments total
+        const paymentsRes = await fetch('/api/payment/', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+        if (paymentsRes.ok) {
+            const paymentsData = await paymentsRes.json();
+            const total = paymentsData.results ? paymentsData.results.reduce((sum, p) => sum + p.amount, 0) : 0;
+            document.getElementById('totalPayments').textContent = '$' + total.toFixed(2);
+        }
+    } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+    }
+}
+
+// Load all data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserInfo();
+    loadDashboardStats();
+});
+</script>
+{% endblock %}
+
