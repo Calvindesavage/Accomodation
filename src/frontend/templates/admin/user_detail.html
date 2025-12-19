@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.first_name }} {{ user.last_name }} - User Details</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/admin-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/admin-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>Hotels</h3>
+                </a>
+                <a href="/admin-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>Rooms</h3>
+                </a>
+                <a href="/admin-panel/bookings/">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/admin-panel/customers/">
+                    <span class="material-icons-sharp">person_outline</span>
+                    <h3>Customers</h3>
+                </a>
+                <a href="/admin-panel/payments/">
+                    <span class="material-icons-sharp">payments</span>
+                    <h3>Payments</h3>
+                </a>
+                <a href="/admin-panel/users/" class="active">
+                    <span class="material-icons-sharp">people</span>
+                    <h3>Users</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Exit</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+            <div class="date">
+                <p><a href="/admin-panel/users/">← Back to Users</a></p>
+            </div>
+
+            <div class="insights">
+                <div class="sales">
+                    <span class="material-icons-sharp">person</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>User Information</h3>
+                            <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                            <p><strong>Role:</strong> 
+                                <span class="{% if user.role == 'ADMIN' %}danger{% elif user.role == 'LANDLORD' %}warning{% else %}primary{% endif %}">
+                                    {{ user.get_role_display }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expenses">
+                    <span class="material-icons-sharp">verified_user</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Permissions</h3>
+                            <p><strong>Staff Status:</strong> 
+                                <span class="{% if user.is_staff %}success{% else %}text-muted{% endif %}">
+                                    {{ user.is_staff|yesno:"Yes,No" }}
+                                </span>
+                            </p>
+                            <p><strong>Superuser:</strong> 
+                                <span class="{% if user.is_superuser %}danger{% else %}text-muted{% endif %}">
+                                    {{ user.is_superuser|yesno:"Yes,No" }}
+                                </span>
+                            </p>
+                            <p><strong>Active:</strong> 
+                                <span class="{% if user.is_active %}success{% else %}danger{% endif %}">
+                                    {{ user.is_active|yesno:"Active,Inactive" }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="income">
+                    <span class="material-icons-sharp">schedule</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Account Details</h3>
+                            <p><strong>Date Joined:</strong> {{ user.date_joined|date:"M d, Y H:i" }}</p>
+                            <p><strong>Last Login:</strong> {{ user.last_login|date:"M d, Y H:i"|default:"Never" }}</p>
+                            {% if user.role == 'LANDLORD' %}
+                            <p><strong>Total Hotels:</strong> {{ hotels_count }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if user.role == 'LANDLORD' %}
+            <div class="recent-orders">
+                <h2>Hotels Owned by this Landlord ({{ hotels_count }})</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hotel Name</th>
+                            <th>City</th>
+                            <th>Country</th>
+                            <th>Star Rating</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hotel in hotels %}
+                        <tr>
+                            <td><strong>{{ hotel.name }}</strong></td>
+                            <td>{{ hotel.city }}</td>
+                            <td>{{ hotel.country }}</td>
+                            <td>{{ "⭐"|safe }}{{ hotel.star_rating }}</td>
+                            <td class="{% if hotel.is_active %}success{% else %}danger{% endif %}">
+                                {{ hotel.is_active|yesno:"Active,Inactive" }}
+                            </td>
+                            <td class="primary">
+                                <a href="/admin-panel/hotels/{{ hotel.slug }}/">View</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-muted">No hotels owned by this landlord</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+</body>
+</html>
+

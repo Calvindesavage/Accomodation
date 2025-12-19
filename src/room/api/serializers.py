@@ -4,6 +4,8 @@ from room.models import Room
 
 
 class RoomSerializer(serializers.ModelSerializer):
+    hotel_name = serializers.SerializerMethodField()
+    hotel_city = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
@@ -14,3 +16,9 @@ class RoomSerializer(serializers.ModelSerializer):
             'floor_no': {'required': False},
             'price': {'required': False}
         }
+
+    def get_hotel_name(self, obj):
+        return obj.hotel.name if obj.hotel else None
+
+    def get_hotel_city(self, obj):
+        return obj.hotel.city if obj.hotel else None

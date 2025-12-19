@@ -124,7 +124,7 @@ if (!token) {
     window.location.href = '{% url "frontend:login" %}';
 }
 
-// Load user information
+// Load user information and redirect based on role
 async function loadUserInfo() {
     try {
         const response = await fetch('/api/account/me', {
@@ -133,6 +133,17 @@ async function loadUserInfo() {
 
         if (response.ok) {
             const user = await response.json();
+
+            // Redirect based on role
+            if (user.role === 'ADMIN') {
+                window.location.href = '/dashboard/admin/';
+                return;
+            } else if (user.role === 'LANDLORD') {
+                window.location.href = '/dashboard/landlord/';
+                return;
+            }
+
+            // For regular users, show the dashboard
             document.getElementById('userName').textContent = `${user.first_name} ${user.last_name}`;
             document.getElementById('userEmail').textContent = user.email;
             document.getElementById('userFullName').textContent = `${user.first_name} ${user.last_name}`;

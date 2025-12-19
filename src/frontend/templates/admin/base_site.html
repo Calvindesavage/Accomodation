@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom Admin CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/admin_custom.css' %}">
+    <style>
+        /* Additional inline styles for better admin experience */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f7fa;
+        }
+
+        #header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Make the admin more modern */
+        .module {
+            border: none !important;
+            border-radius: 15px !important;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
+        }
+
+        /* Improve readability */
+        #content {
+            padding: 20px;
+            background: transparent;
+        }
+
+        /* Better spacing */
+        .submit-row {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        /* Modern table styling */
+        table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Card-like containers */
+        .results {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+    </style>
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}" style="color: white; text-decoration: none;">
+        <i class="bi bi-building-fill"></i> Hotel Booking System
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+

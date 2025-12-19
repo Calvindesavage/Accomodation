@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings - Landlord Panel</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/landlord-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/landlord-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>My Hotels</h3>
+                </a>
+                <a href="/landlord-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>My Rooms</h3>
+                </a>
+                <a href="/landlord-panel/bookings/" class="active">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Bookings</h1>
+            <div class="date">
+                <p><a href="/landlord-panel/">Dashboard</a> / <strong>Bookings</strong></p>
+            </div>
+
+            <div class="recent-orders">
+                <table id="bookingsTable">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Room</th>
+                            <th>Customer Phone</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Price</th>
+                            <th>Discounted Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <tr>
+                            <td colspan="8" class="text-muted">Loading bookings...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Landlord <b>Panel</b></p>
+                        <small class="text-muted">Bookings</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+    <script>
+const token = localStorage.getItem('token');
+if (!token) {
+    window.location.href = '/login/';
+}
+
+async function loadBookings() {
+    try {
+        const response = await fetch('/api/booking/', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const bookings = data.results || data;
+
+            const tbody = document.getElementById('bookingsTableBody');
+            if (bookings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-muted">No bookings yet.</td></tr>';
+            } else {
+                tbody.innerHTML = '';
+                bookings.forEach(booking => {
+                    const row = document.createElement('tr');
+                    const checkIn = booking.booking_start_time ? new Date(booking.booking_start_time).toLocaleDateString() : 'N/A';
+                    const checkOut = booking.booking_end_time ? new Date(booking.booking_end_time).toLocaleDateString() : 'N/A';
+                    row.innerHTML = `
+                        <td><strong><a href="/landlord-panel/bookings/${booking.id}/">#${booking.id}</a></strong></td>
+                        <td>${booking.room_no || booking.room}</td>
+                        <td>${booking.customer_phone_no}</td>
+                        <td>${checkIn}</td>
+                        <td>${checkOut}</td>
+                        <td>$${parseFloat(booking.price || 0).toFixed(2)}</td>
+                        <td>$${parseFloat(booking.discounted_price || booking.price || 0).toFixed(2)}</td>
+                        <td class="primary"><a href="/landlord-panel/bookings/${booking.id}/">View Details</a></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading bookings:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadBookings);
+    </script>
+</body>
+</html>
+

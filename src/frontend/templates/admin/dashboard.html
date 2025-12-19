@@ -1,0 +1,346 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Hotel Booking System</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/admin-dashboard.css" />
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <img src="https://img.icons8.com/color/48/000000/hotel.png" alt="Logo" />
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/admin-panel/" class="active">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/admin-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>Hotels</h3>
+                </a>
+                <a href="/admin-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>Rooms</h3>
+                </a>
+                <a href="/admin-panel/bookings/">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/admin-panel/customers/">
+                    <span class="material-icons-sharp">person_outline</span>
+                    <h3>Customers</h3>
+                </a>
+                <a href="/admin-panel/payments/">
+                    <span class="material-icons-sharp">payments</span>
+                    <h3>Payments</h3>
+                </a>
+                <a href="/admin-panel/users/">
+                    <span class="material-icons-sharp">people</span>
+                    <h3>Users</h3>
+                </a>
+                <a href="/admin/">
+                    <span class="material-icons-sharp">settings</span>
+                    <h3>Django Admin</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Exit</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Dashboard</h1>
+
+            <div class="date">
+                <input type="date" id="dateFilter" />
+            </div>
+
+            <div class="insights">
+                <!-- TOTAL HOTELS -->
+                <div class="sales">
+                    <span class="material-icons-sharp">hotel</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Total Hotels</h3>
+                            <h1 id="totalHotels">0</h1>
+                        </div>
+                        <div class="progress">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="number">
+                                <p id="hotelsPercent">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">All registered hotels</small>
+                </div>
+
+                <!-- TOTAL BOOKINGS -->
+                <div class="expenses">
+                    <span class="material-icons-sharp">event</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Total Bookings</h3>
+                            <h1 id="totalBookings">0</h1>
+                        </div>
+                        <div class="progress">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="number">
+                                <p id="bookingsPercent">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">Total reservations</small>
+                </div>
+
+                <!-- TOTAL ROOMS -->
+                <div class="income">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Total Rooms</h3>
+                            <h1 id="totalRooms">0</h1>
+                        </div>
+                        <div class="progress">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="number">
+                                <p id="roomsPercent">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">Available rooms</small>
+                </div>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Recent Hotels</h2>
+                <table id="recent-hotels-table">
+                    <thead>
+                        <tr>
+                            <th>Hotel Name</th>
+                            <th>City</th>
+                            <th>Country</th>
+                            <th>Landlord Email</th>
+                            <th>Star Rating</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentHotelsBody">
+                        <tr>
+                            <td colspan="8" class="text-muted">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a href="/admin-panel/hotels/">Show All</a>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Recent Rooms</h2>
+                <table id="recent-rooms-table">
+                    <thead>
+                        <tr>
+                            <th>Hotel</th>
+                            <th>Room No</th>
+                            <th>Floor</th>
+                            <th>Capacity</th>
+                            <th>Price</th>
+                            <th>Available</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentRoomsBody">
+                        <tr>
+                            <td colspan="7" class="text-muted">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a href="/admin-panel/rooms/">Show All</a>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Recent Bookings</h2>
+                <table id="recent-bookings-table">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Customer Phone</th>
+                            <th>Room</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentBookingsBody">
+                        <tr>
+                            <td colspan="8" class="text-muted">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a href="/admin-panel/bookings/">Show All</a>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Recent Customers</h2>
+                <table id="recent-customers-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Gender</th>
+                            <th>Country</th>
+                            <th>Occupation</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentCustomersBody">
+                        <tr>
+                            <td colspan="7" class="text-muted">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a href="/admin-panel/customers/">Show All</a>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Recent Payments</h2>
+                <table id="recent-payments-table">
+                    <thead>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>Booking ID</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentPaymentsBody">
+                        <tr>
+                            <td colspan="6" class="text-muted">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a href="/admin-panel/payments/">Show All</a>
+            </div>
+        </main>
+
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Hey, <b id="adminName">Admin</b></p>
+                        <small class="text-muted">Administrator</small>
+                    </div>
+                    <div class="profile-photo">
+                        <img src="https://img.icons8.com/color/48/000000/user.png" alt="Profile Picture" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-updates">
+                <h2>Recent Activities</h2>
+                <div class="updates" id="recentActivities">
+                    <div class="update">
+                        <div class="profile-photo">
+                            <img src="https://img.icons8.com/color/48/000000/user.png" alt="User" />
+                        </div>
+                        <div class="message">
+                            <p><b>System</b> initialized successfully</p>
+                            <small class="text-muted">Just now</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sales-analytics">
+                <h2>Quick Stats</h2>
+                <div id="analytics">
+                    <div class="item online">
+                        <div class="icon">
+                            <span class="material-icons-sharp">people</span>
+                        </div>
+                        <div class="right">
+                            <div class="info">
+                                <h3>TOTAL USERS</h3>
+                                <small class="text-muted">All registered</small>
+                            </div>
+                            <h5 class="success" id="usersChange">+0%</h5>
+                            <h3 id="totalUsers">0</h3>
+                        </div>
+                    </div>
+                    <div class="item offline">
+                        <div class="icon">
+                            <span class="material-icons-sharp">person</span>
+                        </div>
+                        <div class="right">
+                            <div class="info">
+                                <h3>CUSTOMERS</h3>
+                                <small class="text-muted">Total customers</small>
+                            </div>
+                            <h5 class="danger" id="customersChange">+0%</h5>
+                            <h3 id="totalCustomers">0</h3>
+                        </div>
+                    </div>
+                    <div class="item customers">
+                        <div class="icon">
+                            <span class="material-icons-sharp">payments</span>
+                        </div>
+                        <div class="right">
+                            <div class="info">
+                                <h3>PAYMENTS</h3>
+                                <small class="text-muted">Total payments</small>
+                            </div>
+                            <h5 class="success" id="paymentsChange">+0%</h5>
+                            <h3 id="totalPayments">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="item add-product">
+                    <div>
+                        <span class="material-icons-sharp">add</span>
+                        <h3>Add Hotel</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/admin-dashboard.js"></script>
+</body>
+</html>
+

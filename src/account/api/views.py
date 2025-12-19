@@ -23,6 +23,7 @@ def registration_view(request):
             data['email'] = account.email
             data['first_name'] = account.first_name
             data['last_name'] = account.last_name
+            data['role'] = account.role
             token = Token.objects.get(user=account).key
             data['token'] = token
             return Response(data, status=status.HTTP_200_OK)

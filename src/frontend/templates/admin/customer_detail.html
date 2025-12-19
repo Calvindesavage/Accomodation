@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ customer.first_name }} {{ customer.last_name }} - Customer Details</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/admin-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/admin-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>Hotels</h3>
+                </a>
+                <a href="/admin-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>Rooms</h3>
+                </a>
+                <a href="/admin-panel/bookings/">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/admin-panel/customers/" class="active">
+                    <span class="material-icons-sharp">person_outline</span>
+                    <h3>Customers</h3>
+                </a>
+                <a href="/admin-panel/payments/">
+                    <span class="material-icons-sharp">payments</span>
+                    <h3>Payments</h3>
+                </a>
+                <a href="/admin-panel/users/">
+                    <span class="material-icons-sharp">people</span>
+                    <h3>Users</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Exit</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>{{ customer.first_name }} {{ customer.last_name }}</h1>
+            <div class="date">
+                <p><a href="/admin-panel/customers/">← Back to Customers</a></p>
+            </div>
+
+            <div class="insights">
+                <div class="sales">
+                    <span class="material-icons-sharp">person_outline</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Personal Information</h3>
+                            <p><strong>Name:</strong> {{ customer.first_name }} {{ customer.last_name }}</p>
+                            <p><strong>Phone:</strong> {{ customer.phone_no }}</p>
+                            <p><strong>Email:</strong> {{ customer.email|default:"N/A" }}</p>
+                            <p><strong>Gender:</strong> {{ customer.get_gender_display|title }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expenses">
+                    <span class="material-icons-sharp">work</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Additional Details</h3>
+                            <p><strong>Occupation:</strong> {{ customer.occupation|default:"N/A" }}</p>
+                            <p><strong>Country:</strong> {{ customer.country|default:"N/A" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="income">
+                    <span class="material-icons-sharp">event</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Booking Statistics</h3>
+                            <p><strong>Total Bookings:</strong> {{ bookings_count }}</p>
+                            <p><strong>Registered:</strong> {{ customer.created_at|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Bookings by this Customer ({{ bookings_count }})</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Room</th>
+                            <th>Hotel</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td><strong>#{{ booking.id }}</strong></td>
+                            <td>{{ booking.room.room_no }}</td>
+                            <td>
+                                <a href="/admin-panel/hotels/{{ booking.room.hotel.slug }}/">
+                                    {{ booking.room.hotel.name }}
+                                </a>
+                            </td>
+                            <td>{{ booking.booking_start_time|date:"M d, Y" }}</td>
+                            <td>{{ booking.booking_end_time|date:"M d, Y" }}</td>
+                            <td>${{ booking.discounted_price }}</td>
+                            <td class="primary">
+                                <a href="/admin-panel/bookings/{{ booking.id }}/">View</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-muted">No bookings by this customer</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+</body>
+</html>
+

@@ -1,4 +1,8 @@
 import os
+from pathlib import Path
+
+# Build paths
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # django vars
 LANGUAGE_CODE = 'en-us'
@@ -8,6 +12,10 @@ USE_L10N = True
 USE_TZ = True
 APPEND_SLASH = False
 STATIC_URL = '/static/'
+
+# Media files (uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # env
 DB_NAME = os.environ.get('DB_NAME')

@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room {{ room.room_no }} - Room Details</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/admin-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/admin-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>Hotels</h3>
+                </a>
+                <a href="/admin-panel/rooms/" class="active">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>Rooms</h3>
+                </a>
+                <a href="/admin-panel/bookings/">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/admin-panel/customers/">
+                    <span class="material-icons-sharp">person_outline</span>
+                    <h3>Customers</h3>
+                </a>
+                <a href="/admin-panel/payments/">
+                    <span class="material-icons-sharp">payments</span>
+                    <h3>Payments</h3>
+                </a>
+                <a href="/admin-panel/users/">
+                    <span class="material-icons-sharp">people</span>
+                    <h3>Users</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Exit</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Room {{ room.room_no }}</h1>
+            <div class="date">
+                <p><a href="/admin-panel/rooms/">← Back to Rooms</a></p>
+            </div>
+
+            <div class="insights">
+                <div class="sales">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Room Information</h3>
+                            <p><strong>Room No:</strong> {{ room.room_no }}</p>
+                            <p><strong>Floor:</strong> {{ room.floor_no }}</p>
+                            <p><strong>Capacity:</strong> {{ room.capacity }} people</p>
+                            <p><strong>Price:</strong> ${{ room.price }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expenses">
+                    <span class="material-icons-sharp">hotel</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Hotel Details</h3>
+                            <p><strong>Hotel:</strong> 
+                                <a href="/admin-panel/hotels/{{ room.hotel.slug }}/">{{ room.hotel.name }}</a>
+                            </p>
+                            <p><strong>City:</strong> {{ room.hotel.city }}</p>
+                            <p><strong>Country:</strong> {{ room.hotel.country }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="income">
+                    <span class="material-icons-sharp">info</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Status</h3>
+                            <p><strong>Available:</strong> 
+                                <span class="{% if room.is_available %}success{% else %}danger{% endif %}">
+                                    {{ room.is_available|yesno:"Yes,No" }}
+                                </span>
+                            </p>
+                            <p><strong>Total Bookings:</strong> {{ bookings_count }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Room Details</h2>
+                <p>{{ room.details|default:"No additional details available" }}</p>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Bookings for this Room ({{ bookings_count }})</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Customer Phone</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td><strong>#{{ booking.id }}</strong></td>
+                            <td>{{ booking.customer_phone_no }}</td>
+                            <td>{{ booking.booking_start_time|date:"M d, Y" }}</td>
+                            <td>{{ booking.booking_end_time|date:"M d, Y" }}</td>
+                            <td>${{ booking.discounted_price }}</td>
+                            <td class="primary">
+                                <a href="/admin-panel/bookings/{{ booking.id }}/">View</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-muted">No bookings for this room</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+</body>
+</html>
+

@@ -1,0 +1,153 @@
+{% extends "admin/base_site.html" %}
+{% load admin_urls static admin_list %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .section-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            background: white;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 20px;
+            font-weight: 600;
+        }
+
+        .section-header h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .table-container {
+            padding: 20px;
+        }
+
+        #result_list {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #result_list thead th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            padding: 15px;
+            border: none;
+        }
+
+        #result_list tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        #result_list tbody tr:hover {
+            background-color: #f0f4ff;
+            transform: scale(1.01);
+        }
+
+        .actions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .button, .submit-row input[type="submit"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover, .submit-row input[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .addlink {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white !important;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .addlink:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.3);
+        }
+
+        #changelist-filter {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        #changelist-filter h2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        #changelist-filter h3 {
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 15px;
+            font-size: 1rem;
+        }
+
+        .paginator {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .breadcrumbs {
+            background: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .breadcrumbs a {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        #content-main {
+            padding: 30px;
+        }
+
+        #toolbar {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+{% endblock %}
+

@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ hotel.name }} - Landlord Panel</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/landlord-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/landlord-panel/hotels/" class="active">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>My Hotels</h3>
+                </a>
+                <a href="/landlord-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>My Rooms</h3>
+                </a>
+                <a href="/landlord-panel/bookings/">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>{{ hotel.name }}</h1>
+            <div class="date">
+                <p><a href="/landlord-panel/">Dashboard</a> / <a href="/landlord-panel/hotels/">My Hotels</a> / <strong>{{ hotel.name }}</strong></p>
+            </div>
+
+            <div class="insights">
+                <div class="sales">
+                    <span class="material-icons-sharp">star</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Star Rating</h3>
+                            <h1>{{ hotel.star_rating }}</h1>
+                        </div>
+                    </div>
+                    <small class="text-muted">{% for i in "12345" %}{% if forloop.counter <= hotel.star_rating %}⭐{% endif %}{% endfor %}</small>
+                </div>
+
+                <div class="expenses">
+                    <span class="material-icons-sharp">location_city</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Location</h3>
+                            <h1>{{ hotel.city }}</h1>
+                        </div>
+                    </div>
+                    <small class="text-muted">{{ hotel.country }}</small>
+                </div>
+
+                <div class="income">
+                    <span class="material-icons-sharp">{{ hotel.is_active|yesno:"check_circle,cancel" }}</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Status</h3>
+                            <h1>{{ hotel.is_active|yesno:"Active,Inactive" }}</h1>
+                        </div>
+                    </div>
+                    <small class="text-muted">Current status</small>
+                </div>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Hotel Details</h2>
+                <table>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Name</strong></td>
+                        <td>{{ hotel.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Slug</strong></td>
+                        <td><code>{{ hotel.slug }}</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>City</strong></td>
+                        <td>{{ hotel.city }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Country</strong></td>
+                        <td>{{ hotel.country }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Address</strong></td>
+                        <td>{{ hotel.address }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phone Number</strong></td>
+                        <td>{{ hotel.phone_no|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email</strong></td>
+                        <td>{{ hotel.email|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Star Rating</strong></td>
+                        <td>{% for i in "12345" %}{% if forloop.counter <= hotel.star_rating %}⭐{% endif %}{% endfor %} ({{ hotel.star_rating }} stars)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Description</strong></td>
+                        <td>{{ hotel.description|default:"No description provided" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Status</strong></td>
+                        <td class="{{ hotel.is_active|yesno:'success,danger' }}">{{ hotel.is_active|yesno:"Active,Inactive" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Landlord</strong></td>
+                        <td>{{ hotel.landlord.get_full_name }} ({{ hotel.landlord.email }})</td>
+                    </tr>
+                </table>
+                <br>
+                <a href="/admin/hotel/hotel/{{ hotel.id }}/change/" class="btn btn-primary">
+                    <span class="material-icons-sharp">edit</span> Edit Hotel
+                </a>
+            </div>
+        </main>
+
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+</body>
+</html>
+

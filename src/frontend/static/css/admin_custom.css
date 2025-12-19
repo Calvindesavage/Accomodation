@@ -1,0 +1,316 @@
+/* Custom Django Admin Styling for Hotel Booking System */
+
+/* Admin Header Customization */
+#header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+#branding h1 {
+    color: white;
+    font-weight: 700;
+    font-size: 28px;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+#branding h1 a:link,
+#branding h1 a:visited {
+    color: white;
+}
+
+#user-tools {
+    color: white;
+    font-weight: 500;
+}
+
+#user-tools a {
+    color: white;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+
+#user-tools a:hover {
+    border-bottom-color: white;
+}
+
+/* Breadcrumbs */
+div.breadcrumbs {
+    background: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    padding: 12px 20px;
+    font-size: 14px;
+}
+
+div.breadcrumbs a {
+    color: #667eea;
+    font-weight: 500;
+}
+
+div.breadcrumbs a:hover {
+    color: #764ba2;
+}
+
+/* Module Headers */
+.module h2, .module caption, .inline-group h2 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    padding: 12px 15px;
+    border-radius: 5px 5px 0 0;
+}
+
+/* Dashboard Modules */
+#content-main .module {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+/* Action Buttons */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover, a.button:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.button.default:hover, input[type=submit].default:hover, .submit-row input.default:hover {
+    background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+}
+
+/* Delete Button */
+.deletelink, .deletelink-box a.deletelink {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.deletelink:hover, .deletelink-box a.deletelink:hover {
+    background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);
+}
+
+/* Change List */
+#changelist {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#changelist-filter {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+#changelist-filter h2 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+#changelist-filter h3 {
+    color: #667eea;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+/* Table Styling */
+#result_list {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+#result_list thead th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    padding: 12px;
+}
+
+
+
+#result_list thead th a:link,
+#result_list thead th a:visited {
+    color: white;
+}
+
+#result_list tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+#result_list tbody tr:hover {
+    background-color: #f0f4ff;
+}
+
+#result_list tbody tr.selected {
+    background-color: #e3e9ff;
+}
+
+/* Form Styling */
+.form-row {
+    padding: 15px 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.form-row:hover {
+    background-color: #f8f9fa;
+}
+
+fieldset.module {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+fieldset.collapsed {
+    background: #f8f9fa;
+}
+
+/* Error Messages */
+.errornote {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
+}
+
+.errorlist {
+    color: #dc3545;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+/* Success Messages */
+.success, .messagelist .success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(40, 167, 69, 0.3);
+}
+
+/* Info Messages */
+.info, .messagelist .info {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: white;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(23, 162, 184, 0.3);
+}
+
+/* Warning Messages */
+.warning, .messagelist .warning {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: #212529;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(255, 193, 7, 0.3);
+}
+
+/* Pagination */
+.paginator {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.paginator a:link, .paginator a:visited {
+    background: white;
+    color: #667eea;
+    border: 1px solid #667eea;
+    padding: 8px 12px;
+    border-radius: 5px;
+    margin: 0 3px;
+    transition: all 0.3s ease;
+}
+
+.paginator a:hover {
+    background: #667eea;
+    color: white;
+}
+
+.paginator .this-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+/* Dashboard Icons */
+.app-hotel .addlink::before,
+.app-hotel .changelink::before {
+    content: "🏨 ";
+}
+
+.app-room .addlink::before,
+.app-room .changelink::before {
+    content: "🚪 ";
+}
+
+.app-booking .addlink::before,
+.app-booking .changelink::before {
+    content: "📅 ";
+}
+
+.app-customer .addlink::before,
+.app-customer .changelink::before {
+    content: "👤 ";
+}
+
+.app-payment .addlink::before,
+.app-payment .changelink::before {
+    content: "💳 ";
+}
+
+.app-account .addlink::before,
+.app-account .changelink::before {
+    content: "👥 ";
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #changelist-filter {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    #result_list {
+        font-size: 12px;
+    }
+
+    .form-row {
+        padding: 10px 5px;
+    }
+}

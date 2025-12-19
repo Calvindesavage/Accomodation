@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Hotels - Landlord Panel</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/landlord-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/landlord-panel/hotels/" class="active">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>My Hotels</h3>
+                </a>
+                <a href="/landlord-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>My Rooms</h3>
+                </a>
+                <a href="/landlord-panel/bookings/">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>My Hotels</h1>
+            <div class="date">
+                <p><a href="/landlord-panel/">Dashboard</a> / <strong>My Hotels</strong></p>
+            </div>
+
+            <div class="recent-orders">
+                <button class="btn btn-primary" onclick="window.location.href='/landlord-panel/'">
+                    <span class="material-icons-sharp">add</span> Add New Hotel
+                </button>
+                <table id="hotelsTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Slug</th>
+                            <th>City</th>
+                            <th>Country</th>
+                            <th>Address</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Rating</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hotelsTableBody">
+                        <tr>
+                            <td colspan="10" class="text-muted">Loading hotels...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Landlord <b>Panel</b></p>
+                        <small class="text-muted">My Hotels</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+    <script>
+const token = localStorage.getItem('token');
+if (!token) {
+    window.location.href = '/login/';
+}
+
+// Load hotels
+async function loadHotels() {
+    try {
+        const response = await fetch('/api/hotel/', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const hotels = data.results || data;
+
+            const tbody = document.getElementById('hotelsTableBody');
+            if (hotels.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-muted">No hotels yet.</td></tr>';
+            } else {
+                tbody.innerHTML = '';
+                hotels.forEach(hotel => {
+                    const stars = '⭐'.repeat(hotel.star_rating);
+                    const row = document.createElement('tr');
+                    const hotelUrl = hotel.slug ? `/landlord-panel/hotels/${hotel.slug}/` : '#';
+                    row.innerHTML = `
+                        <td><strong><a href="${hotelUrl}">${hotel.name}</a></strong></td>
+                        <td><code>${hotel.slug || 'N/A'}</code></td>
+                        <td>${hotel.city}</td>
+                        <td>${hotel.country}</td>
+                        <td>${hotel.address || 'N/A'}</td>
+                        <td>${hotel.phone_no || 'N/A'}</td>
+                        <td>${hotel.email || 'N/A'}</td>
+                        <td>${stars}</td>
+                        <td class="${hotel.is_active ? 'success' : 'danger'}">${hotel.is_active ? 'Active' : 'Inactive'}</td>
+                        <td class="primary"><a href="${hotelUrl}">View Details</a></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading hotels:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadHotels);
+    </script>
+</body>
+</html>
+

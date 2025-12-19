@@ -74,8 +74,31 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem('token', data.token);
-            alert('Login successful!');
-            window.location.href = '{% url "frontend:dashboard" %}';
+
+            // Fetch user profile to get role
+            const profileResponse = await fetch('/api/account/me', {
+                headers: {
+                    'Authorization': `Token ${data.token}`
+                }
+            });
+
+            if (profileResponse.ok) {
+                const userData = await profileResponse.json();
+                localStorage.setItem('userRole', userData.role);
+                alert('Login successful!');
+
+                // Redirect based on role
+                if (userData.role === 'ADMIN') {
+                    window.location.href = '/dashboard/admin/';
+                } else if (userData.role === 'LANDLORD') {
+                    window.location.href = '/dashboard/landlord/';
+                } else {
+                    window.location.href = '/dashboard/';
+                }
+            } else {
+                // Fallback to default dashboard
+                window.location.href = '{% url "frontend:dashboard" %}';
+            }
         } else {
             const errorData = await response.json();
             let errorMsg = 'Login failed: ';

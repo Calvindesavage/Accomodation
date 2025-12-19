@@ -30,6 +30,7 @@ class MyAccountManager(BaseUserManager):
             email = self.normalize_email(email),
             password = password,
         )
+        user.role = 'ADMIN'
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
@@ -38,9 +39,20 @@ class MyAccountManager(BaseUserManager):
 
 
 class Account(AbstractBaseUser):
+    ADMIN = 'ADMIN'
+    LANDLORD = 'LANDLORD'
+    USER = 'USER'
+
+    ROLE_CHOICES = [
+        (ADMIN, 'Admin'),
+        (LANDLORD, 'Landlord'),
+        (USER, 'User'),
+    ]
+
     email = models.EmailField(verbose_name='email', max_length=100, unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=USER)
     date_joined     = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
     last_login      = models.DateTimeField(verbose_name='last login', auto_now=True)
     is_active       = models.BooleanField(default=True)
@@ -60,6 +72,15 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_active
+
+    def is_role_admin(self):
+        return self.role == self.ADMIN or self.is_admin
+
+    def is_role_landlord(self):
+        return self.role == self.LANDLORD
+
+    def is_role_user(self):
+        return self.role == self.USER
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

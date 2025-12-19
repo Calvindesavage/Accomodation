@@ -1,0 +1,854 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landlord Dashboard - Hotel Booking System</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+    <style>
+        /* Additional styles for modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: var(--color-white);
+            margin: 5% auto;
+            padding: 0;
+            border: none;
+            border-radius: var(--border-radius-3);
+            width: 90%;
+            max-width: 600px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            background: var(--color-primary);
+            color: white;
+            border-radius: var(--border-radius-3) var(--border-radius-3) 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--color-info-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .close:hover {
+            opacity: 0.8;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--color-dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--color-info-light);
+            border-radius: var(--border-radius-1);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius-1);
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: all 300ms ease;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-variant);
+        }
+
+        .btn-secondary {
+            background: var(--color-info-light);
+            color: var(--color-dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-info-dark);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/landlord-panel/" class="active">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/landlord-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>My Hotels</h3>
+                </a>
+                <a href="/landlord-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>My Rooms</h3>
+                </a>
+                <a href="/landlord-panel/bookings/">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Landlord Dashboard</h1>
+            <div class="date">
+                <p>Welcome, <strong><span id="userName">Landlord</span></strong> | <span id="userEmail">-</span></p>
+            </div>
+
+            <!-- Analytics -->
+            <div class="insights">
+                <div class="sales">
+                    <span class="material-icons-sharp">hotel</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>My Hotels</h3>
+                            <h1 id="totalHotels">0</h1>
+                        </div>
+                        <div class="progress">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="number">
+                                <p>100%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">Properties owned</small>
+                </div>
+
+                <div class="expenses">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Total Rooms</h3>
+                            <h1 id="totalRooms">0</h1>
+                        </div>
+                        <div class="progress">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="number">
+                                <p><span id="availableRooms">0</span> Available</p>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">Room inventory</small>
+                </div>
+
+                <div class="income">
+                    <span class="material-icons-sharp">event</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Active Bookings</h3>
+                            <h1 id="activeBookings">0</h1>
+                        </div>
+                        <div class="progress">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="number">
+                                <p>Active</p>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">Current reservations</small>
+                </div>
+            </div>
+            <!-- End of Analytics -->
+
+            <!-- Hotels Section -->
+            <div class="recent-orders" id="hotels-section">
+                <h2>My Hotels</h2>
+                <button class="btn btn-primary" onclick="openAddHotelModal()">
+                    <span class="material-icons-sharp">add</span> Add New Hotel
+                </button>
+                <table id="hotelsTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Slug</th>
+                            <th>City</th>
+                            <th>Country</th>
+                            <th>Address</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Rating</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hotelsTableBody">
+                        <tr>
+                            <td colspan="10" class="text-muted">Loading hotels...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Rooms Section -->
+            <div class="recent-orders" id="rooms-section">
+                <h2>My Rooms</h2>
+                <button class="btn btn-primary" onclick="openAddRoomModal()">
+                    <span class="material-icons-sharp">add</span> Add New Room
+                </button>
+                <table id="roomsTable">
+                    <thead>
+                        <tr>
+                            <th>Hotel</th>
+                            <th>Room No</th>
+                            <th>Floor</th>
+                            <th>Capacity</th>
+                            <th>Price</th>
+                            <th>Details</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roomsTableBody">
+                        <tr>
+                            <td colspan="8" class="text-muted">Loading rooms...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bookings Section -->
+            <div class="recent-orders" id="bookings-section">
+                <h2>Recent Bookings</h2>
+                <table id="bookingsTable">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Room</th>
+                            <th>Customer Phone</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Price</th>
+                            <th>Discounted Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <tr>
+                            <td colspan="7" class="text-muted">Loading bookings...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Landlord <b>Panel</b></p>
+                        <small class="text-muted">Property Manager</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-updates">
+                <h2>Quick Actions</h2>
+                <div class="updates">
+                    <div class="update">
+                        <div class="message">
+                            <p><b>Add Hotel</b></p>
+                            <small class="text-muted">Create a new property</small>
+                        </div>
+                    </div>
+                    <div class="update">
+                        <div class="message">
+                            <p><b>Add Room</b></p>
+                            <small class="text-muted">Add rooms to your hotels</small>
+                        </div>
+                    </div>
+                    <div class="update">
+                        <div class="message">
+                            <p><b>View Bookings</b></p>
+                            <small class="text-muted">Check reservations</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Hotel Modal -->
+    <div id="addHotelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><span class="material-icons-sharp">hotel</span> Add New Hotel</h2>
+                <span class="close" onclick="closeAddHotelModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addHotelForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hotelName">Hotel Name *</label>
+                            <input type="text" id="hotelName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hotelCity">City *</label>
+                            <input type="text" id="hotelCity" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hotelCountry">Country *</label>
+                            <input type="text" id="hotelCountry" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hotelStarRating">Star Rating *</label>
+                            <select id="hotelStarRating" required>
+                                <option value="1">1 Star</option>
+                                <option value="2">2 Stars</option>
+                                <option value="3" selected>3 Stars</option>
+                                <option value="4">4 Stars</option>
+                                <option value="5">5 Stars</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="hotelAddress">Address *</label>
+                        <textarea id="hotelAddress" rows="2" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hotelPhone">Phone Number</label>
+                            <input type="tel" id="hotelPhone">
+                        </div>
+                        <div class="form-group">
+                            <label for="hotelEmail">Email</label>
+                            <input type="email" id="hotelEmail">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="hotelDescription">Description</label>
+                        <textarea id="hotelDescription" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeAddHotelModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addHotel()">
+                    <span class="material-icons-sharp">add</span> Add Hotel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Room Modal -->
+    <div id="addRoomModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><span class="material-icons-sharp">meeting_room</span> Add New Room</h2>
+                <span class="close" onclick="closeAddRoomModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addRoomForm">
+                    <div class="form-group">
+                        <label for="roomHotel">Select Hotel *</label>
+                        <select id="roomHotel" required>
+                            <option value="">-- Select Hotel --</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="roomNo">Room Number *</label>
+                            <input type="text" id="roomNo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="floorNo">Floor Number *</label>
+                            <input type="number" id="floorNo" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="capacity">Capacity *</label>
+                            <input type="number" id="capacity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price per Night ($) *</label>
+                            <input type="number" id="price" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="roomDetails">Room Details</label>
+                        <textarea id="roomDetails" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeAddRoomModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addRoom()">
+                    <span class="material-icons-sharp">add</span> Add Room
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+    <script>
+const token = localStorage.getItem('token');
+if (!token) {
+    window.location.href = '/login/';
+}
+
+let myHotels = [];
+
+// Modal functions
+function openAddHotelModal() {
+    document.getElementById('addHotelModal').style.display = 'block';
+}
+
+function closeAddHotelModal() {
+    document.getElementById('addHotelModal').style.display = 'none';
+    document.getElementById('addHotelForm').reset();
+}
+
+function openAddRoomModal() {
+    document.getElementById('addRoomModal').style.display = 'block';
+}
+
+function closeAddRoomModal() {
+    document.getElementById('addRoomModal').style.display = 'none';
+    document.getElementById('addRoomForm').reset();
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const hotelModal = document.getElementById('addHotelModal');
+    const roomModal = document.getElementById('addRoomModal');
+    if (event.target == hotelModal) {
+        closeAddHotelModal();
+    }
+    if (event.target == roomModal) {
+        closeAddRoomModal();
+    }
+}
+
+// Scroll to section
+function scrollToSection(sectionId) {
+    document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+}
+
+// Load user information
+async function loadUserInfo() {
+    try {
+        const response = await fetch('/api/account/me', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+
+        if (response.ok) {
+            const user = await response.json();
+
+            // Check if user is landlord
+            if (user.role !== 'LANDLORD' && user.role !== 'ADMIN') {
+                alert('Access denied. This page is for landlords only.');
+                window.location.href = '/dashboard/';
+                return;
+            }
+
+            document.getElementById('userName').textContent = `${user.first_name} ${user.last_name}`;
+            document.getElementById('userEmail').textContent = user.email;
+        } else {
+            localStorage.removeItem('token');
+            window.location.href = '/login/';
+        }
+    } catch (error) {
+        console.error('Error loading user info:', error);
+    }
+}
+
+// Load hotels
+async function loadHotels() {
+    try {
+        const response = await fetch('/api/hotel/', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            myHotels = data.results || data;
+
+            // Update stats
+            document.getElementById('totalHotels').textContent = myHotels.length;
+
+            // Populate hotel dropdown in add room modal
+            const hotelSelect = document.getElementById('roomHotel');
+            hotelSelect.innerHTML = '<option value="">-- Select Hotel --</option>';
+            myHotels.forEach(hotel => {
+                hotelSelect.innerHTML += `<option value="${hotel.id}">${hotel.name} - ${hotel.city}</option>`;
+            });
+
+            // Display hotels
+            const tbody = document.getElementById('hotelsTableBody');
+            if (myHotels.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-muted">No hotels yet. Click "Add New Hotel" to get started!</td></tr>';
+            } else {
+                tbody.innerHTML = '';
+                myHotels.forEach(hotel => {
+                    const stars = '⭐'.repeat(hotel.star_rating);
+                    const row = document.createElement('tr');
+                    const hotelUrl = hotel.slug ? `/landlord-panel/hotels/${hotel.slug}/` : '#';
+                    row.innerHTML = `
+                        <td><strong><a href="${hotelUrl}">${hotel.name}</a></strong></td>
+                        <td><code>${hotel.slug || 'N/A'}</code></td>
+                        <td>${hotel.city}</td>
+                        <td>${hotel.country}</td>
+                        <td>${hotel.address || 'N/A'}</td>
+                        <td>${hotel.phone_no || 'N/A'}</td>
+                        <td>${hotel.email || 'N/A'}</td>
+                        <td>${stars}</td>
+                        <td class="${hotel.is_active ? 'success' : 'danger'}">${hotel.is_active ? 'Active' : 'Inactive'}</td>
+                        <td class="primary">
+                            <a href="${hotelUrl}">View</a> |
+                            <a href="#" onclick="deleteHotel(${hotel.id}); return false;" class="danger">Delete</a>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading hotels:', error);
+        document.getElementById('hotelsTableBody').innerHTML = '<tr><td colspan="10" class="danger">Error loading hotels</td></tr>';
+    }
+}
+
+// Load rooms
+async function loadRooms() {
+    try {
+        const response = await fetch('/api/room/', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const rooms = data.results || data;
+
+            // Update stats
+            document.getElementById('totalRooms').textContent = rooms.length;
+            const available = rooms.filter(r => r.is_available).length;
+            document.getElementById('availableRooms').textContent = available;
+
+            // Display rooms
+            const tbody = document.getElementById('roomsTableBody');
+            if (rooms.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-muted">No rooms yet. Add a hotel first, then add rooms!</td></tr>';
+            } else {
+                tbody.innerHTML = '';
+                rooms.forEach(room => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${room.hotel_name || 'N/A'}</strong></td>
+                        <td><a href="/landlord-panel/rooms/${room.id}/">${room.room_no}</a></td>
+                        <td>${room.floor_no}</td>
+                        <td>${room.capacity} guests</td>
+                        <td>$${parseFloat(room.price).toFixed(2)}</td>
+                        <td>${room.details || 'N/A'}</td>
+                        <td class="${room.is_available ? 'success' : 'warning'}">${room.is_available ? 'Available' : 'Occupied'}</td>
+                        <td class="primary">
+                            <a href="/landlord-panel/rooms/${room.id}/">View</a> |
+                            <a href="#" onclick="deleteRoom(${room.id}); return false;" class="danger">Delete</a>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading rooms:', error);
+        document.getElementById('roomsTableBody').innerHTML = '<tr><td colspan="8" class="danger">Error loading rooms</td></tr>';
+    }
+}
+
+// Load bookings
+async function loadBookings() {
+    try {
+        const response = await fetch('/api/booking/', {
+            headers: { 'Authorization': `Token ${token}` }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const bookings = data.results || data;
+
+            // Update stats
+            document.getElementById('activeBookings').textContent = bookings.length;
+
+            // Display bookings
+            const tbody = document.getElementById('bookingsTableBody');
+            if (bookings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-muted">No bookings yet.</td></tr>';
+            } else {
+                tbody.innerHTML = '';
+                bookings.slice(0, 10).forEach(booking => {
+                    const row = document.createElement('tr');
+                    const checkIn = booking.booking_start_time ? new Date(booking.booking_start_time).toLocaleDateString() : 'N/A';
+                    const checkOut = booking.booking_end_time ? new Date(booking.booking_end_time).toLocaleDateString() : 'N/A';
+                    row.innerHTML = `
+                        <td><strong><a href="/landlord-panel/bookings/${booking.id}/">#${booking.id}</a></strong></td>
+                        <td>${booking.room_no || booking.room}</td>
+                        <td>${booking.customer_phone_no}</td>
+                        <td>${checkIn}</td>
+                        <td>${checkOut}</td>
+                        <td>$${parseFloat(booking.price || 0).toFixed(2)}</td>
+                        <td>$${parseFloat(booking.discounted_price || booking.price || 0).toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading bookings:', error);
+        document.getElementById('bookingsTableBody').innerHTML = '<tr><td colspan="7" class="danger">Error loading bookings</td></tr>';
+    }
+}
+
+// Add hotel
+async function addHotel() {
+    const name = document.getElementById('hotelName').value.trim();
+    const city = document.getElementById('hotelCity').value.trim();
+    const country = document.getElementById('hotelCountry').value.trim();
+    const address = document.getElementById('hotelAddress').value.trim();
+    const star_rating = document.getElementById('hotelStarRating').value;
+    const phone_no = document.getElementById('hotelPhone').value.trim();
+    const email = document.getElementById('hotelEmail').value.trim();
+    const description = document.getElementById('hotelDescription').value.trim();
+
+    if (!name || !city || !country || !address) {
+        alert('Please fill in all required fields');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/hotel/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Token ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name, city, country, address, star_rating,
+                phone_no, email, description
+            })
+        });
+
+        if (response.ok) {
+            alert('Hotel added successfully!');
+            closeAddHotelModal();
+            loadHotels();
+        } else {
+            const error = await response.json();
+            alert('Error adding hotel: ' + JSON.stringify(error));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error adding hotel. Please try again.');
+    }
+}
+// Add room
+async function addRoom() {
+    const hotel = document.getElementById('roomHotel').value;
+    const room_no = document.getElementById('roomNo').value.trim();
+    const floor_no = document.getElementById('floorNo').value;
+    const capacity = document.getElementById('capacity').value;
+    const price = document.getElementById('price').value;
+    const details = document.getElementById('roomDetails').value.trim();
+
+    if (!hotel || !room_no || !floor_no || !capacity || !price) {
+        alert('Please fill in all required fields');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/room/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Token ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                hotel, room_no, floor_no, capacity, price, details
+            })
+        });
+
+        if (response.ok) {
+            alert('Room added successfully!');
+            closeAddRoomModal();
+            loadRooms();
+        } else {
+            const error = await response.json();
+            alert('Error adding room: ' + JSON.stringify(error));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error adding room. Please try again.');
+    }
+}
+
+// Delete hotel
+async function deleteHotel(id) {
+    if (!confirm('Are you sure you want to delete this hotel?')) return;
+
+    try {
+        const response = await fetch(`/api/hotel/${id}/`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Token ${token}` }
+        });
+
+        if (response.ok || response.status === 204) {
+            alert('Hotel deleted successfully!');
+            loadHotels();
+        } else {
+            alert('Error deleting hotel');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error deleting hotel. Please try again.');
+    }
+}
+
+// Delete room
+async function deleteRoom(id) {
+    if (!confirm('Are you sure you want to delete this room?')) return;
+
+    try {
+        const response = await fetch(`/api/room/${id}/`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Token ${token}` }
+        });
+
+        if (response.ok || response.status === 204) {
+            alert('Room deleted successfully!');
+            loadRooms();
+        } else {
+            alert('Error deleting room');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error deleting room. Please try again.');
+    }
+}
+
+// View hotel details
+function viewHotel(id) {
+    const hotel = myHotels.find(h => h.id === id);
+    if (hotel) {
+        const details = `
+Hotel Details:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Name: ${hotel.name}
+Slug: ${hotel.slug || 'N/A'}
+City: ${hotel.city}
+Country: ${hotel.country}
+Address: ${hotel.address}
+Rating: ${'⭐'.repeat(hotel.star_rating)}
+Phone: ${hotel.phone_no || 'N/A'}
+Email: ${hotel.email || 'N/A'}
+Description: ${hotel.description || 'N/A'}
+Status: ${hotel.is_active ? 'Active' : 'Inactive'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        `;
+        alert(details);
+    }
+}
+
+// Load all data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserInfo();
+    loadHotels();
+    loadRooms();
+    loadBookings();
+});
+    </script>
+</body>
+</html>
+

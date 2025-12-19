@@ -26,6 +26,7 @@ LOCAL_APPS = [
     'base',
     'account',
     'customer',
+    'hotel',
     'room',
     'booking',
     'payment',

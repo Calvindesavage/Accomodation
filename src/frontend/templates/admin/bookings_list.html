@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/admin-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/admin-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>Hotels</h3>
+                </a>
+                <a href="/admin-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>Rooms</h3>
+                </a>
+                <a href="/admin-panel/bookings/" class="active">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/admin-panel/customers/">
+                    <span class="material-icons-sharp">person_outline</span>
+                    <h3>Customers</h3>
+                </a>
+                <a href="/admin-panel/payments/">
+                    <span class="material-icons-sharp">payments</span>
+                    <h3>Payments</h3>
+                </a>
+                <a href="/admin-panel/users/">
+                    <span class="material-icons-sharp">people</span>
+                    <h3>Users</h3>
+                </a>
+                <a href="/admin/">
+                    <span class="material-icons-sharp">settings</span>
+                    <h3>Django Admin</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Exit</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Bookings Management</h1>
+            <div class="date">
+                <p>Total Bookings: <strong>{{ total_count }}</strong></p>
+            </div>
+
+            <div class="recent-orders">
+                <h2>All Bookings</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Room</th>
+                            <th>Hotel</th>
+                            <th>Customer Phone</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td><strong>#{{ booking.id }}</strong></td>
+                            <td>{{ booking.room.room_no }}</td>
+                            <td>
+                                <a href="/admin-panel/hotels/{{ booking.room.hotel.slug }}/">
+                                    {{ booking.room.hotel.name }}
+                                </a>
+                            </td>
+                            <td>{{ booking.customer_phone_no }}</td>
+                            <td>{{ booking.booking_start_time|date:"M d, Y" }}</td>
+                            <td>{{ booking.booking_end_time|date:"M d, Y" }}</td>
+                            <td>${{ booking.discounted_price }}</td>
+                            <td class="primary">
+                                <a href="/admin-panel/bookings/{{ booking.id }}/">View</a> |
+                                <a href="/admin/booking/booking/{{ booking.id }}/change/">Edit</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-muted">No bookings found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Admin <b>Panel</b></p>
+                        <small class="text-muted">Administrator</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-updates">
+                <h2>Quick Actions</h2>
+                <div class="updates">
+                    <div class="update">
+                        <a href="/admin/booking/booking/add/" class="primary">
+                            <span class="material-icons-sharp">add_circle</span>
+                            Add New Booking
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+</body>
+</html>
+

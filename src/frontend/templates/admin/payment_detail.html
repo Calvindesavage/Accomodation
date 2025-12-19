@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment #{{ payment.id }} - Details</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/admin-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/admin-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>Hotels</h3>
+                </a>
+                <a href="/admin-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>Rooms</h3>
+                </a>
+                <a href="/admin-panel/bookings/">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/admin-panel/customers/">
+                    <span class="material-icons-sharp">person_outline</span>
+                    <h3>Customers</h3>
+                </a>
+                <a href="/admin-panel/payments/" class="active">
+                    <span class="material-icons-sharp">payments</span>
+                    <h3>Payments</h3>
+                </a>
+                <a href="/admin-panel/users/">
+                    <span class="material-icons-sharp">people</span>
+                    <h3>Users</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Exit</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Payment #{{ payment.id }}</h1>
+            <div class="date">
+                <p><a href="/admin-panel/payments/">← Back to Payments</a></p>
+            </div>
+
+            <div class="insights">
+                <div class="sales">
+                    <span class="material-icons-sharp">payments</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Payment Information</h3>
+                            <p><strong>Payment ID:</strong> #{{ payment.id }}</p>
+                            <p><strong>Amount:</strong> <span class="success">${{ payment.amount }}</span></p>
+                            <p><strong>Payment Method:</strong> {{ payment.get_payment_method_display|upper }}</p>
+                            <p><strong>Date:</strong> {{ payment.created_at|date:"M d, Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expenses">
+                    <span class="material-icons-sharp">event</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Booking Details</h3>
+                            <p><strong>Booking ID:</strong> 
+                                <a href="/admin-panel/bookings/{{ payment.booking.id }}/">#{{ payment.booking.id }}</a>
+                            </p>
+                            <p><strong>Room:</strong> 
+                                <a href="/admin-panel/rooms/{{ payment.booking.room.id }}/">{{ payment.booking.room.room_no }}</a>
+                            </p>
+                            <p><strong>Hotel:</strong> 
+                                <a href="/admin-panel/hotels/{{ payment.booking.room.hotel.slug }}/">
+                                    {{ payment.booking.room.hotel.name }}
+                                </a>
+                            </p>
+                            <p><strong>Customer Phone:</strong> {{ payment.booking.customer_phone_no }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="income">
+                    <span class="material-icons-sharp">info</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Booking Dates</h3>
+                            <p><strong>Check-in:</strong> {{ payment.booking.booking_start_time|date:"M d, Y" }}</p>
+                            <p><strong>Check-out:</strong> {{ payment.booking.booking_end_time|date:"M d, Y" }}</p>
+                            <p><strong>Total Price:</strong> ${{ payment.booking.discounted_price }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Additional Information</h2>
+                <p><strong>Created By:</strong> {{ payment.created_by|default:"System" }}</p>
+                <p><strong>Updated At:</strong> {{ payment.updated_at|date:"M d, Y H:i" }}</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+</body>
+</html>
+

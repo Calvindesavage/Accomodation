@@ -9,16 +9,21 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['email', 'first_name', 'last_name', 'password', 'password2']
+        fields = ['email', 'first_name', 'last_name', 'role', 'password', 'password2']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'role': {'required': False}
         }
 
     def save(self):
+        # Default role is USER if not specified
+        role = self.validated_data.get('role', Account.USER)
+
         account = Account(
             email = self.validated_data['email'],
             first_name = self.validated_data['first_name'],
             last_name = self.validated_data['last_name'],
+            role = role,
         )
         password = self.validated_data['password']
         password2 = self.validated_data['password2']
@@ -36,7 +41,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'email', 'first_name', 'last_name', 'date_joined', 'last_login', 'is_active', 'is_admin', 'is_staff']
+        fields = ['id', 'email', 'first_name', 'last_name', 'role', 'date_joined', 'last_login', 'is_active', 'is_admin', 'is_staff']
         read_only_fields = ['id', 'email', 'date_joined', 'last_login', 'is_active', 'is_admin', 'is_staff']
 
 

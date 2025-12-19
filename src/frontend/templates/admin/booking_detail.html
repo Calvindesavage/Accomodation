@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking #{{ booking.id }} - Details</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/admin-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/admin-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>Hotels</h3>
+                </a>
+                <a href="/admin-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>Rooms</h3>
+                </a>
+                <a href="/admin-panel/bookings/" class="active">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/admin-panel/customers/">
+                    <span class="material-icons-sharp">person_outline</span>
+                    <h3>Customers</h3>
+                </a>
+                <a href="/admin-panel/payments/">
+                    <span class="material-icons-sharp">payments</span>
+                    <h3>Payments</h3>
+                </a>
+                <a href="/admin-panel/users/">
+                    <span class="material-icons-sharp">people</span>
+                    <h3>Users</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Exit</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Booking #{{ booking.id }}</h1>
+            <div class="date">
+                <p><a href="/admin-panel/bookings/">← Back to Bookings</a></p>
+            </div>
+
+            <div class="insights">
+                <div class="sales">
+                    <span class="material-icons-sharp">event</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Booking Information</h3>
+                            <p><strong>Booking ID:</strong> #{{ booking.id }}</p>
+                            <p><strong>Booking Time:</strong> {{ booking.booking_time|date:"M d, Y H:i" }}</p>
+                            <p><strong>Check-in:</strong> {{ booking.booking_start_time|date:"M d, Y H:i" }}</p>
+                            <p><strong>Check-out:</strong> {{ booking.booking_end_time|date:"M d, Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expenses">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Room & Hotel</h3>
+                            <p><strong>Room:</strong> 
+                                <a href="/admin-panel/rooms/{{ booking.room.id }}/">{{ booking.room.room_no }}</a>
+                            </p>
+                            <p><strong>Hotel:</strong> 
+                                <a href="/admin-panel/hotels/{{ booking.room.hotel.slug }}/">{{ booking.room.hotel.name }}</a>
+                            </p>
+                            <p><strong>Customer Phone:</strong> {{ booking.customer_phone_no }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="income">
+                    <span class="material-icons-sharp">payments</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Payment Details</h3>
+                            <p><strong>Original Price:</strong> ${{ booking.price }}</p>
+                            <p><strong>Discounted Price:</strong> ${{ booking.discounted_price }}</p>
+                            <p><strong>Total Paid:</strong> <span class="success">${{ total_paid }}</span></p>
+                            <p><strong>Balance:</strong> 
+                                <span class="{% if balance > 0 %}danger{% else %}success{% endif %}">
+                                    ${{ balance }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Check-in/Check-out History</h2>
+                <p><strong>Last Check-in:</strong> {{ booking.last_checkin_time|date:"M d, Y H:i"|default:"Not checked in yet" }}</p>
+                <p><strong>Last Check-out:</strong> {{ booking.last_checkout_time|date:"M d, Y H:i"|default:"Not checked out yet" }}</p>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Payments for this Booking</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td><strong>#{{ payment.id }}</strong></td>
+                            <td class="success">${{ payment.amount }}</td>
+                            <td>{{ payment.get_payment_method_display|upper }}</td>
+                            <td>{{ payment.created_at|date:"M d, Y H:i" }}</td>
+                            <td class="primary">
+                                <a href="/admin-panel/payments/{{ payment.id }}/">View</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-muted">No payments for this booking</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+</body>
+</html>
+

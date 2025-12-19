@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/admin-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/admin-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>Hotels</h3>
+                </a>
+                <a href="/admin-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>Rooms</h3>
+                </a>
+                <a href="/admin-panel/bookings/">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/admin-panel/customers/">
+                    <span class="material-icons-sharp">person_outline</span>
+                    <h3>Customers</h3>
+                </a>
+                <a href="/admin-panel/payments/">
+                    <span class="material-icons-sharp">payments</span>
+                    <h3>Payments</h3>
+                </a>
+                <a href="/admin-panel/users/" class="active">
+                    <span class="material-icons-sharp">people</span>
+                    <h3>Users</h3>
+                </a>
+                <a href="/admin/">
+                    <span class="material-icons-sharp">settings</span>
+                    <h3>Django Admin</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Exit</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Users Management</h1>
+            <div class="date">
+                <p>Total Users: <strong>{{ total_count }}</strong> | 
+                   Admins: <strong>{{ admin_count }}</strong> | 
+                   Landlords: <strong>{{ landlord_count }}</strong> | 
+                   Users: <strong>{{ user_count }}</strong>
+                </p>
+            </div>
+
+            <div class="recent-orders">
+                <h2>All Users</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Staff</th>
+                            <th>Active</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td><strong>{{ user.first_name }} {{ user.last_name }}</strong></td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <span class="{% if user.role == 'ADMIN' %}danger{% elif user.role == 'LANDLORD' %}warning{% else %}primary{% endif %}">
+                                    {{ user.get_role_display }}
+                                </span>
+                            </td>
+                            <td class="{% if user.is_staff %}success{% else %}text-muted{% endif %}">
+                                {{ user.is_staff|yesno:"Yes,No" }}
+                            </td>
+                            <td class="{% if user.is_active %}success{% else %}danger{% endif %}">
+                                {{ user.is_active|yesno:"Active,Inactive" }}
+                            </td>
+                            <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                            <td class="primary">
+                                <a href="/admin-panel/users/{{ user.id }}/">View</a> |
+                                <a href="/admin/account/account/{{ user.id }}/change/">Edit</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-muted">No users found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Admin <b>Panel</b></p>
+                        <small class="text-muted">Administrator</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-updates">
+                <h2>Quick Actions</h2>
+                <div class="updates">
+                    <div class="update">
+                        <a href="/admin/account/account/add/" class="primary">
+                            <span class="material-icons-sharp">add_circle</span>
+                            Add New User
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+</body>
+</html>
+

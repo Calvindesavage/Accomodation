@@ -2,6 +2,7 @@ from rest_framework import permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, filters, mixins, viewsets
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 from base.helpers import CustomPagination
 from booking.models import Booking
 from .serializers import BookingSerializer, BookingListSerializer
@@ -26,15 +27,30 @@ class BookingViewset(mixins.ListModelMixin,
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     ordering_fields = ['-created_at']
     permission_classes = [permissions.IsAuthenticated, ]
-    # permission_classes = [permissions.AllowAny, ]
 
     filterset_fields = [
         'customer_phone_no', 'room'
     ]
 
     def get_queryset(self):
+        """
+        Admin - sees all bookings
+        Landlord - sees bookings for rooms in their hotels
+        User - sees only their own bookings
+        """
         queryset = super().get_queryset()
-        return queryset
+        user = self.request.user
+
+        if user.is_role_admin():
+            return queryset  # Admin sees all
+        elif user.is_role_landlord():
+            # Landlord sees bookings for rooms in their hotels
+            return queryset.filter(room__hotel__landlord=user)
+        elif user.is_role_user():
+            # User sees only their own bookings (matched by email)
+            return queryset.filter(created_by=user.email)
+
+        return queryset.none()
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -42,7 +58,14 @@ class BookingViewset(mixins.ListModelMixin,
         return BookingSerializer
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user.email)
+        """Only users can create bookings"""
+        user = self.request.user
+
+        # Only regular users can make bookings
+        if not user.is_role_user():
+            raise PermissionDenied("Only regular users can make bookings")
+
+        serializer.save(created_by=user.email)
 
     def list(self, request, *args, **kwargs):
         return super(BookingViewset, self).list(request, *args, **kwargs)

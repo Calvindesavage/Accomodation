@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking #{{ booking.id }} - Landlord Panel</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h2>Hotel<span class="danger">Booking</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="/landlord-panel/">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="/landlord-panel/hotels/">
+                    <span class="material-icons-sharp">hotel</span>
+                    <h3>My Hotels</h3>
+                </a>
+                <a href="/landlord-panel/rooms/">
+                    <span class="material-icons-sharp">meeting_room</span>
+                    <h3>My Rooms</h3>
+                </a>
+                <a href="/landlord-panel/bookings/" class="active">
+                    <span class="material-icons-sharp">event</span>
+                    <h3>Bookings</h3>
+                </a>
+                <a href="/">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Booking #{{ booking.id }}</h1>
+            <div class="date">
+                <p><a href="/landlord-panel/">Dashboard</a> / <a href="/landlord-panel/bookings/">Bookings</a> / <strong>Booking #{{ booking.id }}</strong></p>
+            </div>
+
+            <div class="insights">
+                <div class="sales">
+                    <span class="material-icons-sharp">attach_money</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Price</h3>
+                            <h1>${{ booking.price }}</h1>
+                        </div>
+                    </div>
+                    <small class="text-muted">Original price</small>
+                </div>
+
+                <div class="expenses">
+                    <span class="material-icons-sharp">local_offer</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Final Price</h3>
+                            <h1>${{ booking.discounted_price|default:booking.price }}</h1>
+                        </div>
+                    </div>
+                    <small class="text-muted">After discount</small>
+                </div>
+
+                <div class="income">
+                    <span class="material-icons-sharp">event</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Duration</h3>
+                            <h1>{{ booking.booking_start_time|date:"M d" }} - {{ booking.booking_end_time|date:"M d" }}</h1>
+                        </div>
+                    </div>
+                    <small class="text-muted">Check-in to Check-out</small>
+                </div>
+            </div>
+
+            <div class="recent-orders">
+                <h2>Booking Details</h2>
+                <table>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Booking ID</strong></td>
+                        <td>#{{ booking.id }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Room</strong></td>
+                        <td><a href="/landlord-panel/rooms/{{ booking.room.id }}/">Room {{ booking.room.room_no }}</a> (Floor {{ booking.room.floor_no }})</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hotel</strong></td>
+                        <td><a href="/landlord-panel/hotels/{{ booking.room.hotel.slug }}/">{{ booking.room.hotel.name }}</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Customer Phone</strong></td>
+                        <td>{{ booking.customer_phone_no }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Check-in Date</strong></td>
+                        <td>{{ booking.booking_start_time|date:"F d, Y" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Check-out Date</strong></td>
+                        <td>{{ booking.booking_end_time|date:"F d, Y" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Original Price</strong></td>
+                        <td>${{ booking.price }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Discounted Price</strong></td>
+                        <td>${{ booking.discounted_price|default:booking.price }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Created At</strong></td>
+                        <td>{{ booking.created_at|date:"F d, Y H:i" }}</td>
+                    </tr>
+                </table>
+                <br>
+                <a href="/admin/booking/booking/{{ booking.id }}/change/" class="btn btn-primary">
+                    <span class="material-icons-sharp">edit</span> Edit Booking
+                </a>
+            </div>
+        </main>
+
+        <div class="right">
+            <div class="top">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-icons-sharp active">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/admin-dashboard.js' %}"></script>
+</body>
+</html>
+
