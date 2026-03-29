@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Sora', sans-serif;
+  background: #0f0a00;
+  color: rgba(255, 255, 255, 0.85);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark theme utility classes */
+@layer components {
+  .dark-card {
+    @apply rounded-2xl border;
+    background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(249,115,22,0.02));
+    border-color: rgba(249,115,22,0.15);
+  }
+  .dark-card:hover {
+    border-color: rgba(249,115,22,0.3);
+    background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(249,115,22,0.04));
+  }
+  .dark-input {
+    @apply w-full px-4 py-3 rounded-xl outline-none text-sm;
+    background: rgba(249,115,22,0.06);
+    border: 1px solid rgba(249,115,22,0.15);
+    color: white;
+    transition: border-color 0.2s;
+  }
+  .dark-input::placeholder {
+    color: rgba(255,255,255,0.3);
+  }
+  .dark-input:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 2px rgba(249,115,22,0.15);
+  }
+  .dark-input option {
+    background: #1a1106;
+    color: white;
+  }
+  .dark-btn-primary {
+    @apply px-6 py-3 rounded-xl font-semibold text-sm;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    border: none;
+    transition: all 0.3s;
+  }
+  .dark-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 30px rgba(249,115,22,0.35);
+  }
+  .dark-btn-primary:disabled {
+    opacity: 0.5;
+    transform: none;
+    box-shadow: none;
+  }
+  .dark-btn-outline {
+    @apply px-6 py-3 rounded-xl font-semibold text-sm;
+    background: transparent;
+    color: white;
+    border: 1.5px solid rgba(249,115,22,0.4);
+    transition: all 0.3s;
+  }
+  .dark-btn-outline:hover {
+    border-color: #f97316;
+    background: rgba(249,115,22,0.1);
+  }
+  .dark-badge {
+    @apply px-3 py-1 rounded-full text-xs font-semibold;
+    background: rgba(249,115,22,0.15);
+    border: 1px solid rgba(249,115,22,0.3);
+    color: #fb923c;
+  }
+  .dark-label {
+    @apply block text-xs font-medium mb-1.5;
+    color: rgba(255,255,255,0.5);
+  }
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(249,115,22,0.3), transparent);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
