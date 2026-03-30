@@ -1,0 +1,7 @@
+from django.apps import AppConfig
+
+
+class ResidencesConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.residences'
+    verbose_name = 'Residences'
